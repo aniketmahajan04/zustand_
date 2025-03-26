@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { createJSONStorage, devtools, persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 
 export interface Habits {
     id: string,
@@ -14,6 +14,9 @@ interface HabitState {
     addHabit: (name: string, frequency: "daily" | "weekly") => void;
     removeHabit: (id: string) => void;
     toggleHabit: (id: string, date: string) => void;
+    fetchHabit: () => Promise<void>;
+    isLoading: boolean;
+    error: string | null;
 }
 
 const useHabitStore = create<HabitState>()(
@@ -21,6 +24,8 @@ const useHabitStore = create<HabitState>()(
         persist((set) => {
     return {
         habit: [],
+        isLoading: false,
+        error: null,
         addHabit: (name, frequency) => set((state) => {
             return {
                 habit: [
@@ -46,7 +51,8 @@ const useHabitStore = create<HabitState>()(
                         : [...habit.completedDate, date],
                 } : habit
             ),
-        }))
+        })),
+        fetchHabit: async () => {}
     };
 }, {
     name: "habit-store",
